@@ -22,8 +22,8 @@ app.use(compression())
 app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
-app.use('/backend3/api/v1', routerNavigation)
-app.use('/backend3/api', express.static('src/uploads'))
+app.use('/api/v1', routerNavigation)
+app.use('/api', express.static('src/uploads'))
 
 // Socket.io configuration=================
 const server = require('http').createServer(app)
