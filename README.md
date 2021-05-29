@@ -1,6 +1,6 @@
 <h1 align="center">ExpressJS - Meonchat Chat App - RESTfull API</h1>
 
-This RESTfull API is to perform any actions based on request from client app, to get or manipulate data from app's database, you need to run some proper request end point based on desired that are provided in our postman documentation. [More about Express](https://en.wikipedia.org/wiki/Express.js)
+This RESTfull API is to perform any actions based on request from client app, to get or manipulate data from app's database you need to run some proper request end point based on desired that are provided in our postman documentation. [More about Express](https://en.wikipedia.org/wiki/Express.js)
 
 ## Built With
 
