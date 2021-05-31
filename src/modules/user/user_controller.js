@@ -3,23 +3,36 @@ const wrapper = require('../../helpers/wrapper')
 const fs = require('fs')
 const bcrypt = require('bcrypt')
 
-const redis = require('redis')
-const client = redis.createClient()
+// const redis = require('redis')
+// const client = redis.createClient()
 
 const userModel = require('./user_model')
 
 module.exports = {
   getUserById: async (req, res) => {
     try {
-      const { id } = req.params
+      let { userId, userEmail } = req.query
+      if (!userId) {
+        userId = ''
+      }
+      if (!userEmail) {
+        userEmail = ''
+      }
 
-      const result = await userModel.getUserById(id)
+      console.log(userId)
+      console.log(userEmail)
+
+      const result = await userModel.getUserById(userId, userEmail)
       delete result[0].user_password
 
-      client.set(`getmovie:${id}`, JSON.stringify(result))
+      // client.set(
+      //   userId ? `getuser:${userId}` : `getuser:${userEmail}`,
+      //   JSON.stringify(result)
+      // )
 
       return wrapper.response(res, 200, 'Success Get Data By Id', result)
     } catch (error) {
+      // console.log(error)
       return wrapper.response(res, 400, 'Bad Request', error)
     }
   },
@@ -43,7 +56,7 @@ module.exports = {
           user_image: req.file ? req.file.filename : '',
           user_updated_at: new Date(Date.now())
         })
-        return wrapper.response(res, 200, 'Success Update User Data', result)
+        return wrapper.response(res, 200, 'Success Update User Image', result)
       } else {
         return wrapper.response(res, 404, 'Failed! No Data Is Updated')
       }
@@ -63,7 +76,7 @@ module.exports = {
           user_name: name,
           user_updated_at: new Date(Date.now())
         })
-        return wrapper.response(res, 200, 'Success Update User', result)
+        return wrapper.response(res, 200, 'Success Update Name', result)
       } else {
         return wrapper.response(res, 404, 'Failed! No Data Is Updated')
       }
@@ -83,7 +96,7 @@ module.exports = {
           user_username: username,
           user_updated_at: new Date(Date.now())
         })
-        return wrapper.response(res, 200, 'Success Update User', result)
+        return wrapper.response(res, 200, 'Success Update Username', result)
       } else {
         return wrapper.response(res, 404, 'No User Data Updated')
       }
@@ -103,7 +116,7 @@ module.exports = {
           user_phone: phone,
           user_updated_at: new Date(Date.now())
         })
-        return wrapper.response(res, 200, 'Success Update User', result)
+        return wrapper.response(res, 200, 'Success Update Phone Number', result)
       } else {
         return wrapper.response(res, 404, 'No User Data Updated')
       }
@@ -123,7 +136,7 @@ module.exports = {
           user_bio: bio,
           user_updated_at: new Date(Date.now())
         })
-        return wrapper.response(res, 200, 'Success Update User', result)
+        return wrapper.response(res, 200, 'Success Update Bio', result)
       } else {
         return wrapper.response(res, 404, 'No User Data Updated')
       }
@@ -152,7 +165,7 @@ module.exports = {
         const result = await userModel.updateUserData(id, setData)
         delete result.user_password
 
-        return wrapper.response(res, 200, 'Success Update Data', result)
+        return wrapper.response(res, 200, 'Success Update Password', result)
       } else if (dataToUpdate.length === 0) {
         return wrapper.response(res, 404, 'No User Data Updated')
       } else {

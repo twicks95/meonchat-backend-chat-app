@@ -1,11 +1,15 @@
 const db = require('../../config/mysql')
 
 module.exports = {
-  getUserById: (id) => {
+  getUserById: (id, email) => {
     return new Promise((resolve, reject) => {
-      db.query('SELECT * FROM users WHERE user_id = ?', id, (error, result) => {
-        !error ? resolve(result) : reject(new Error(error))
-      })
+      db.query(
+        'SELECT * FROM users WHERE user_id = ? OR user_email = ?',
+        [id, email],
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
     })
   },
 
