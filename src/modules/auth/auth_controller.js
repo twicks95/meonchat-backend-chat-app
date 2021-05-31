@@ -12,8 +12,8 @@ module.exports = {
         user_email: email
       })
 
-      if (emailRegistered > 0) {
-        return wrapper.response(res, 409, 'Email has been registered')
+      if (emailRegistered.length > 0) {
+        return wrapper.response(res, 409, 'Email Has Been Registered')
       } else {
         const salt = bcrypt.genSaltSync(10)
         const encryptedPassword = bcrypt.hashSync(password, salt)
@@ -27,7 +27,7 @@ module.exports = {
         const result = await authModel.register(setData)
         delete result.user_password
 
-        return wrapper.response(res, 200, 'Create User Successfully', result)
+        return wrapper.response(res, 200, 'Success Create User', result)
       }
     } catch (error) {
       return wrapper.response(res, 400, 'Bad Request', error)
@@ -67,7 +67,7 @@ module.exports = {
           return wrapper.response(res, 401, 'Wrong Password')
         }
       } else {
-        return wrapper.response(res, 404, 'Email or Account Not Found')
+        return wrapper.response(res, 404, 'Email or Account Is Not Registered')
       }
     } catch (error) {
       return wrapper.response(res, 400, 'Bad Request', error)
