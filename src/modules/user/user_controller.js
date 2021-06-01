@@ -23,14 +23,19 @@ module.exports = {
       console.log(userEmail)
 
       const result = await userModel.getUserById(userId, userEmail)
-      delete result[0].user_password
 
-      // client.set(
-      //   userId ? `getuser:${userId}` : `getuser:${userEmail}`,
-      //   JSON.stringify(result)
-      // )
+      if (result.length > 0) {
+        delete result[0].user_password
 
-      return wrapper.response(res, 200, 'Success Get Data By Id', result)
+        // client.set(
+        //   userId ? `getuser:${userId}` : `getuser:${userEmail}`,
+        //   JSON.stringify(result)
+        // )
+
+        return wrapper.response(res, 200, 'Success Get Data By Id', result)
+      } else {
+        return wrapper.response(res, 404, 'No User', [])
+      }
     } catch (error) {
       // console.log(error)
       return wrapper.response(res, 400, 'Bad Request', error)
