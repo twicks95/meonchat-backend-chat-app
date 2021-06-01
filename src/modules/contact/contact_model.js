@@ -32,6 +32,17 @@ module.exports = {
       )
     })
   },
+  getDataConditions: (userId, friendId) => {
+    return new Promise((resolve, reject) => {
+      db.query(
+        'SELECT * FROM contact WHERE contact_user_id = ? AND contact_friend_id = ?',
+        [userId, friendId],
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
   deleteContactById: (userId, friendId) => {
     return new Promise((resolve, reject) => {
       db.query(

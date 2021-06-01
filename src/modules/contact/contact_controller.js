@@ -17,6 +17,21 @@ module.exports = {
     }
   },
 
+  getContactByUserAndFriendId: async (req, res) => {
+    try {
+      const { userId, friendId } = req.query
+
+      const result = await contactModel.getDataConditions(userId, friendId)
+      if (result.length > 0) {
+        return wrapper.response(res, 200, 'Success Get Contact', result)
+      } else {
+        return wrapper.response(res, 404, 'No Contact')
+      }
+    } catch (error) {
+      return wrapper.response(res, 400, 'Bad Request', error)
+    }
+  },
+
   getContactByUserId: async (req, res) => {
     try {
       const { id } = req.params
