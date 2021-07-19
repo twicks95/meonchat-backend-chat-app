@@ -10,7 +10,7 @@ const routerNavigation = require('./routes')
 const socket = require('socket.io')
 
 const app = express()
-const port = process.env.DB_PORT
+const port = process.env.DB_PORT || 3003
 
 app.use(morgan('dev'))
 app.use(cors())
@@ -31,47 +31,48 @@ const io = socket(server, {
   cors: {
     origin: '*'
   },
-  path: '/backend3/socket.io'
+  path: '/socket.io'
 })
+
+let listUserOnline = []
+
 io.on('connection', (socket) => {
   console.log('Socket.io Connect !')
-  // global Message = pesan yang dikirim ke semua client
-  socket.on('globalMessage', (data) => {
-    console.log(data)
-    io.emit('chatMessage', data)
-  })
-  // private Message = pesan yang dikirim ke client saja
-  socket.on('privateMessage', (data) => {
-    console.log(data)
-    socket.emit('chatMessage', data)
-  })
-  // private Message = pesan yang dikirim ke semua client kecuali pengirim
-  socket.on('broadcastMessage', (data) => {
-    console.log(data)
-    socket.broadcast.emit('chatMessage', data)
-  })
-  // ==========================================
-  socket.on('joinRoom', (data) => {
-    console.log(data)
-    if (data.oldRoom) {
-      socket.leave(data.oldRoom)
+
+  socket.on('connectServer', ({ userId }) => {
+    if (!listUserOnline.includes(userId)) {
+      listUserOnline.push(userId)
     }
-    socket.join(data.room)
-    socket.broadcast.to(data.room).emit('chatMessage', {
-      username: '[BOT]',
-      message: `${data.username} join this Chat`
-    })
+    io.emit('listUserOnline', listUserOnline)
+    socket.join(userId)
   })
-  socket.on('roomMessage', (data) => {
-    io.to(data.room).emit('chatMessage', data)
+  socket.on('disconnectServer', ({ userId }) => {
+    listUserOnline = listUserOnline.filter((el) => el !== userId)
+    io.emit('listUserOnline', listUserOnline)
+    socket.leave(userId)
+  })
+  socket.on('joinRoom', ({ room, oldRoom }) => {
+    if (oldRoom) {
+      socket.leave(oldRoom)
+    } else {
+      socket.join(room)
+    }
+    // socket.broadcast.to(data.room).emit('message', {
+    //   username: '[BOT]',
+    //   message: `${data.username} join this Chat`
+    // })
+  })
+  socket.on('sendMessage', (data) => {
+    io.to(data.roomChat).emit('message', data)
+  })
+  socket.on('notifMessage', (data) => {
+    socket.broadcast.to(data.receiverId).emit('notifMessage', data)
+  })
+  socket.on('typing', (data) => {
+    socket.broadcast.to(data.room).emit('typing', data)
   })
 })
 
 server.listen(port, () => {
   console.log(`Express app is listen on port ${port} !`)
 })
-// =======================================
-
-// app.listen(port, () => {
-//   console.log(`Express app is listen on port ${port} !`)
-// })

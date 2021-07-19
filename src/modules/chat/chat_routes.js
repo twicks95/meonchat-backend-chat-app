@@ -1,8 +1,9 @@
 const express = require('express')
 const Route = express.Router()
+const { authentication } = require('../../middleware/auth')
 const chatController = require('./chat_controller')
 
-Route.get('/:room', chatController.getChat)
-Route.post('/', chatController.createChat)
+Route.get('/:room', authentication, chatController.getChat)
+Route.post('/', authentication, chatController.createChat)
 
 module.exports = Route

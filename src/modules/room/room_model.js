@@ -12,6 +12,17 @@ module.exports = {
       )
     })
   },
+  getRoom: (room, userId) => {
+    return new Promise((resolve, reject) => {
+      db.query(
+        'SELECT * FROM rooms JOIN users ON rooms.friend_id = users.user_id WHERE rooms.room_chat = ? AND rooms.user_id = ?',
+        [room, userId],
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      )
+    })
+  },
   postRoom: (data) => {
     return new Promise((resolve, reject) => {
       db.query('INSERT INTO rooms SET ?', data, (error, result) => {

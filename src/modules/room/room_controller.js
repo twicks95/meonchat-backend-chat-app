@@ -13,6 +13,21 @@ module.exports = {
     }
   },
 
+  getRoom: async (req, res) => {
+    try {
+      const { room, userId } = req.query
+
+      const result = await roomModel.getRoom(room, userId)
+      if (result.length > 0) {
+        return wrapper.response(res, 200, `Success Get Room ${room}`, result)
+      } else {
+        return wrapper.response(res, 404, 'No Room')
+      }
+    } catch (error) {
+      return wrapper.response(res, 400, 'Bad Request', error)
+    }
+  },
+
   createRoom: async (req, res) => {
     try {
       const { roomChat, userId, friendId } = req.query
